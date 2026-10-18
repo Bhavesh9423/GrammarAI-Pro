@@ -28,6 +28,7 @@ from database.db import (
 from nlp.preprocessing import preprocess_text
 from nlp.grammar_checker import check_grammar
 from nlp.analyzer import analyze_text
+from nlp.ai_correction import correct_with_ai
 
 # Configure logging
 logging.basicConfig(
@@ -207,6 +208,40 @@ def api_analyze_nlp():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/ai-correct', methods=['POST'])
+def api_ai_correct():
+    """Optional pretrained-model correction; existing rule checker remains separate."""
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get('text'), str):
+        return jsonify({'success': False, 'error': 'Invalid request format. JSON string field "text" is required.'}), 400
+    text = data['text'].strip()
+    if not text:
+        return jsonify({'success': False, 'error': 'Input text cannot be empty.'}), 400
+    if len(text) > 5000:
+        return jsonify({'success': False, 'error': 'AI correction supports up to 5,000 characters.'}), 400
+    try:
+        ai_result = correct_with_ai(text)
+        analysis = analyze_text(text)
+        history_id = add_history(
+            original_text=text, corrected_text=ai_result['corrected_text'], error_count=0,
+            errors=[], nlp_summary={'total_words': analysis['word_count'], 'total_sentences': analysis['sentence_count']},
+            ai_metadata={'provider': 'Hugging Face local model', 'model': ai_result['model'], 'method': 'generative'}
+        )
+        return jsonify({
+            'success': True, 'id': history_id, 'original_text': text,
+            'corrected_text': ai_result['corrected_text'], 'model': ai_result['model'],
+            'explanations': ['Generative correction produced by the pretrained model. Review changes because model output can alter meaning.'],
+            'nlp_analysis': analysis
+        }), 200
+    except ValueError as exc:
+        return jsonify({'success': False, 'error': str(exc)}), 400
+    except RuntimeError as exc:
+        return jsonify({'success': False, 'error': str(exc)}), 503
+    except Exception:
+        logger.exception('Unexpected error in /api/ai-correct')
+        return jsonify({'success': False, 'error': 'AI correction is temporarily unavailable.'}), 500
+
+
 @app.route('/api/history', methods=['GET'])
 def api_get_history():
     """Returns stored check history items."""
@@ -293,4 +328,4 @@ if __name__ == '__main__':
     print(f" Grammar Error Detector & Corrector NLP Project")
     print(f" Running at: http://127.0.0.1:{port}")
     print(f"=======================================================\n")
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=os.getenv('FLASK_DEBUG') == '1')

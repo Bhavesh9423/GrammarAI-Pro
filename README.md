@@ -2,6 +2,39 @@
 
 A professional, full-stack Natural Language Processing (NLP) micro-project for detecting grammatical, spelling, punctuation, and stylistic errors in English sentences and providing contextual corrections and morphological linguistic analysis.
 
+## GrammarAI Pro upgrade
+
+GrammarAI Pro preserves the original Flask, NLTK, LanguageTool, custom-rule, SQLite history, and browser interface features. It adds an optional **AI Correct** action backed by the public Hugging Face model [`prithivida/grammar_error_correcter_v1`](https://huggingface.co/prithivida/grammar_error_correcter_v1): a T5/PyTorch `text2text-generation` model. It is loaded lazily on the first AI request and is configurable through `GRAMMAR_AI_MODEL`; no API key is required.
+
+The model download is substantial and model output is not guaranteed to preserve every nuance. The app labels this output as generative and keeps it separate from the existing rule-based correction result. If the model or its dependencies cannot load, `/api/ai-correct` returns a safe 503 message while `/api/check` continues to work.
+
+### AI API
+
+`POST /api/ai-correct` with `{"text":"She go to college every day."}` returns the original text, model-generated corrected text, model identifier, concise disclosure, and the existing NLTK analysis. Empty input, malformed JSON, and text over 5,000 characters return 400.
+
+### Model setup and real inference
+
+```bash
+copy .env.example .env
+pip install -r requirements.txt
+python -c "import nltk; [nltk.download(x) for x in ['punkt','punkt_tab','averaged_perceptron_tagger','averaged_perceptron_tagger_eng','wordnet','omw-1.4']]"
+python app.py
+```
+
+Click **AI Correct** with `She go to college every day.`. The first request downloads and initializes the model; later requests reuse it. For a controlled failure check, set `GRAMMAR_AI_MODEL=not/a-real-model` and restart: the AI endpoint should return 503, while the standard checker still works.
+
+### Deployment
+
+`render.yaml` prepares a one-worker Flask deployment, but verify the current free-tier RAM/disk limits before deploying: T5/PyTorch model downloads and cold starts can exceed small free instances. SQLite is ephemeral on common free/serverless hosts, so deployed history may reset on restart. A Hugging Face Space with an appropriate persistent-storage plan is generally preferable for this model, but requires account login and manual setup. Do not use the included Vercel configuration for real model inference because serverless cold starts and ephemeral storage make it unsuitable.
+
+### ISE-2 report and demo outline
+
+1. Problem: rule-only grammar checking misses contextual cases.
+2. Architecture: browser → Flask APIs → NLTK/LanguageTool/custom rules and optional T5 model → SQLite.
+3. Demonstrate rule checking, POS/lemma analysis, then **AI Correct** and disclose its limitations.
+4. Show history and the graceful unavailable-model message.
+5. Discuss privacy, bias, semantic drift, model size/cold starts, and future evaluation with a labeled GEC dataset.
+
 ---
 
 ## 📌 Project Overview

@@ -33,6 +33,10 @@ venv.bak/
 
 # SQLite database (auto-generated on app startup)
 database.db
+*.db
+.env
+.cache/
+huggingface/
 
 # IDEs and editors
 .vscode/

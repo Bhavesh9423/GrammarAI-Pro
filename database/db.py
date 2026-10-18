@@ -67,6 +67,7 @@ def init_db(db_path=None):
                 error_count INTEGER NOT NULL DEFAULT 0,
                 errors_json TEXT DEFAULT '[]',
                 nlp_summary TEXT DEFAULT '{}',
+                ai_metadata_json TEXT DEFAULT '{}',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -76,6 +77,10 @@ def init_db(db_path=None):
             CREATE INDEX IF NOT EXISTS idx_grammar_history_created 
             ON grammar_history (created_at DESC)
         """)
+        # Backward-compatible migration for databases created before AI support.
+        columns = {row['name'] for row in cursor.execute("PRAGMA table_info(grammar_history)")}
+        if 'ai_metadata_json' not in columns:
+            cursor.execute("ALTER TABLE grammar_history ADD COLUMN ai_metadata_json TEXT DEFAULT '{}'")
 
         conn.commit()
         conn.close()
@@ -83,7 +88,7 @@ def init_db(db_path=None):
         logger.warning(f"Database initialization warning for path {path}: {e}")
 
 
-def add_history(original_text, corrected_text, error_count, errors=None, nlp_summary=None, db_path=None):
+def add_history(original_text, corrected_text, error_count, errors=None, nlp_summary=None, ai_metadata=None, db_path=None):
     """
     Saves a grammar check result into the history table.
     
@@ -106,11 +111,12 @@ def add_history(original_text, corrected_text, error_count, errors=None, nlp_sum
 
         errors_str = json.dumps(errors if errors is not None else [], ensure_ascii=False)
         nlp_str = json.dumps(nlp_summary if nlp_summary is not None else {}, ensure_ascii=False)
+        ai_str = json.dumps(ai_metadata if ai_metadata is not None else {}, ensure_ascii=False)
 
         cursor.execute("""
-            INSERT INTO grammar_history (original_text, corrected_text, error_count, errors_json, nlp_summary, created_at)
-            VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime'))
-        """, (original_text, corrected_text, error_count, errors_str, nlp_str))
+            INSERT INTO grammar_history (original_text, corrected_text, error_count, errors_json, nlp_summary, ai_metadata_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now', 'localtime'))
+        """, (original_text, corrected_text, error_count, errors_str, nlp_str, ai_str))
 
         item_id = cursor.lastrowid
         conn.commit()

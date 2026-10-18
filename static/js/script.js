@@ -190,6 +190,30 @@ async function handleGrammarCheck() {
   }
 }
 
+async function handleAICorrection() {
+  const textarea = document.getElementById('input-text');
+  const text = textarea ? textarea.value.trim() : '';
+  if (!text) { showToast('Please enter text for AI correction.', 'error'); return; }
+  const button = document.getElementById('btn-ai-correct');
+  if (button) button.classList.add('loading');
+  try {
+    const response = await fetch('/api/ai-correct', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({text})});
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'AI correction failed.');
+    currentCorrectedText = data.corrected_text;
+    const output = document.getElementById('ai-corrected-text-display');
+    const details = document.getElementById('ai-correction-result');
+    const model = document.getElementById('ai-model-name');
+    if (output) output.textContent = data.corrected_text;
+    if (model) model.textContent = `Model: ${data.model}`;
+    if (details) details.classList.remove('hidden');
+    populateNLPAnalysis(data.nlp_analysis);
+    showToast('AI correction completed. Please review the meaning.', 'success');
+    loadDashboardData();
+  } catch (err) { showToast(err.message || 'AI correction failed.', 'error'); }
+  finally { if (button) button.classList.remove('loading'); }
+}
+
 // -------------------------------------------------------------
 // 5. Render Results & Highlights
 // -------------------------------------------------------------
