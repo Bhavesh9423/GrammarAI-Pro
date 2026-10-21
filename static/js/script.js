@@ -195,7 +195,10 @@ async function handleAICorrection() {
   const text = textarea ? textarea.value.trim() : '';
   if (!text) { showToast('Please enter text for AI correction.', 'error'); return; }
   const button = document.getElementById('btn-ai-correct');
+  const overlay = document.getElementById('ai-loading-overlay');
   if (button) button.classList.add('loading');
+  if (button) button.disabled = true;
+  if (overlay) overlay.classList.remove('hidden');
   try {
     const response = await fetch('/api/ai-correct', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({text})});
     const data = await response.json();
@@ -211,7 +214,10 @@ async function handleAICorrection() {
     showToast('AI correction completed. Please review the meaning.', 'success');
     loadDashboardData();
   } catch (err) { showToast(err.message || 'AI correction failed.', 'error'); }
-  finally { if (button) button.classList.remove('loading'); }
+  finally {
+    if (button) { button.classList.remove('loading'); button.disabled = false; }
+    if (overlay) overlay.classList.add('hidden');
+  }
 }
 
 // -------------------------------------------------------------

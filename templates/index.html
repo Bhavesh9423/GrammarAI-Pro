@@ -301,13 +301,18 @@
             </div>
           </div>
           <div class="card-body">
-            <textarea 
-              id="input-text" 
-              class="grammar-textarea" 
-              placeholder="Type or paste your English text here (e.g., 'She go to school every day.' or 'Where you are going?')..."
-              rows="6"
-              spellcheck="false"
-            ></textarea>
+            <div class="textarea-border-trail-wrapper" id="textarea-trail-wrapper">
+              <div class="border-trail-track" aria-hidden="true">
+                <div class="border-trail-beam"></div>
+              </div>
+              <textarea 
+                id="input-text" 
+                class="grammar-textarea" 
+                placeholder="Type or paste your English text here (e.g., 'She go to school every day.' or 'Where you are going?')..."
+                rows="6"
+                spellcheck="false"
+              ></textarea>
+            </div>
             
             <div class="card-actions">
               <div class="action-left">
@@ -325,6 +330,20 @@
                 <button id="btn-ai-correct" class="btn btn-accent btn-lg" onclick="handleAICorrection()">
                   <span>AI Correct</span>
                 </button>
+              </div>
+            </div>
+          </div>
+          <div id="ai-loading-overlay" class="ai-loading-overlay hidden" role="status" aria-live="polite" aria-label="AI correction is loading">
+            <div class="border-trail-card">
+              <div class="border-trail-track" aria-hidden="true">
+                <div class="border-trail-beam-card"></div>
+              </div>
+              <div class="border-trail-skeleton-content" role="status" aria-label="Loading...">
+                <div class="skeleton-pill skeleton-w-4"></div>
+                <div class="skeleton-pill skeleton-w-10"></div>
+                <div class="skeleton-pill skeleton-w-12"></div>
+                <div class="skeleton-pill skeleton-w-12"></div>
+                <div class="skeleton-pill skeleton-w-12"></div>
               </div>
             </div>
           </div>
@@ -725,36 +744,36 @@
     <!-- ============================================================== -->
     <section id="section-about" class="tab-content" role="tabpanel">
       <div class="about-hero">
-        <span class="badge badge-accent">College NLP Micro-Project</span>
-        <h1 class="about-title">Grammar Error Detection and Correction Using Natural Language Processing</h1>
-        <p class="about-subtitle">An end-to-end intelligent language processing system combining statistical linguistics, syntactic rule engines, and morpho-syntactic analysis.</p>
+        <h1 class="about-title">GrammarAI Pro: Hybrid NLP &amp; Generative AI Grammar Engine</h1>
+        <p class="about-subtitle">A state-of-the-art dual-engine language processing system combining classical computational linguistics (NLTK, syntactic rules, LanguageTool) with modern generative sequence-to-sequence Transformers (Hugging Face T5).</p>
       </div>
 
       <div class="about-grid">
         <!-- Objective & Problem Statement -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">1. Project Objective & Problem Statement</h3>
+            <h3 class="card-title">1. Project Objective &amp; Problem Statement</h3>
           </div>
           <div class="card-body">
-            <p><strong>Objective:</strong> To develop a robust, modular, and interactive web-based Natural Language Processing application capable of detecting syntactic, grammatical, punctuation, and spelling errors in English sentences and proposing accurate contextual corrections.</p>
-            <p><strong>Problem Statement:</strong> Written communication often suffers from grammatical inconsistencies such as subject-verb disagreement (e.g., <em>"She go"</em>), inverted question structures (e.g., <em>"Where you are going?"</em>), incorrect tense/auxiliary choices (e.g., <em>"They was playing"</em>), and faulty article usages. Manual proofreading is slow and error-prone. This project leverages computational linguistics to automate detection and repair.</p>
+            <p><strong>Objective:</strong> To engineer a dual-architecture Natural Language Processing application combining deterministic rule-based syntactic checking, morphological inspection, and generative deep learning (T5 Transformer) for automated English grammatical error detection and contextual correction.</p>
+            <p><strong>Problem Statement:</strong> Written communication frequently suffers from subject-verb agreement mismatches (e.g., <em>"She go"</em>), inverted interrogative structures (e.g., <em>"Where you are going?"</em>), faulty auxiliary selection (e.g., <em>"They was playing"</em>), and determiner errors. Traditional rule systems provide high interpretability but struggle with fluid contextual rephrasing, whereas pure generative models can introduce semantic drift without transparency. <strong>GrammarAI Pro</strong> synthesizes both paradigms into an interactive, transparent dashboard.</p>
           </div>
         </div>
 
-        <!-- NLP Techniques Used -->
+        <!-- NLP & AI Techniques Used -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">2. NLP Techniques & Methodologies</h3>
+            <h3 class="card-title">2. NLP &amp; Deep Learning Methodologies</h3>
           </div>
           <div class="card-body">
             <ul class="about-feature-list">
-              <li><strong>Text Preprocessing & Normalization:</strong> Unicode standardisation, contraction normalization, and whitespace conditioning.</li>
-              <li><strong>Sentence & Word Tokenization:</strong> Segmenting freeform paragraphs into discrete sentences and lexical tokens using NLTK's Punkt unsupervised multilingual tokenizer.</li>
-              <li><strong>Part-of-Speech (POS) Tagging:</strong> Assigning grammatical classes (e.g., NNP, VBZ, PRP, WRB) via the Averaged Perceptron tagger.</li>
-              <li><strong>Morphological Lemmatization:</strong> Reducing inflectional forms to dictionary base lemmas using WordNet and POS category mappings.</li>
-              <li><strong>Syntactic Rule Induction:</strong> Detecting subject-auxiliary inversion, pronoun-verb agreement, and determiner compatibility.</li>
-              <li><strong>Statistical Language Modeling:</strong> Querying LanguageTool rule graphs to catch contextual collocations and spelling errors.</li>
+              <li><strong>Text Preprocessing &amp; Boundary Checks:</strong> Unicode normalization, contraction expansion, and whitespace conditioning.</li>
+              <li><strong>Sentence &amp; Lexical Tokenization:</strong> Unsupervised sentence boundary segmentation and token extraction using NLTK's Punkt multilingual tokenizer.</li>
+              <li><strong>Part-of-Speech (POS) Tagging:</strong> Grammatical syntactic categorization (e.g., <code>NNP</code>, <code>VBZ</code>, <code>PRP</code>, <code>WRB</code>) using the Averaged Perceptron tagger.</li>
+              <li><strong>Morphological Lemmatization:</strong> Inflection reduction to root dictionary lemmas using WordNet lexical database with POS mapping.</li>
+              <li><strong>Syntactic Rule Induction:</strong> Deterministic detection for Subject-Verb Agreement (SVA), Subject-Auxiliary Inversion in questions, and Determiner-Noun compatibility.</li>
+              <li><strong>Statistical Language Verification:</strong> LanguageTool rule-graph evaluation for contextual collocations and typographic errors.</li>
+              <li><strong>Generative Seq2Seq Transformer:</strong> Deep neural grammatical error correction via Hugging Face's T5 model (<code>prithivida/grammar_error_correcter_v1</code>) using beam search decoding.</li>
             </ul>
           </div>
         </div>
@@ -762,18 +781,21 @@
         <!-- Technologies Used -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">3. Technologies Used</h3>
+            <h3 class="card-title">3. Technologies &amp; Architecture Stack</h3>
           </div>
           <div class="card-body">
             <div class="tech-stack-tags">
               <span class="tech-tag"><strong>Python 3.14</strong> Backend Engine</span>
-              <span class="tech-tag"><strong>Flask 3.1</strong> RESTful Web API</span>
+              <span class="tech-tag"><strong>Flask 3.1</strong> RESTful API Service</span>
+              <span class="tech-tag"><strong>PyTorch 2.14</strong> Deep Learning Runtime</span>
+              <span class="tech-tag"><strong>Transformers 5.2</strong> Hugging Face Seq2Seq Pipeline</span>
+              <span class="tech-tag"><strong>Google T5 Model</strong> <code>grammar_error_correcter_v1</code></span>
               <span class="tech-tag"><strong>NLTK 3.10</strong> Natural Language Toolkit</span>
-              <span class="tech-tag"><strong>WordNet</strong> Lexical Database</span>
-              <span class="tech-tag"><strong>LanguageTool</strong> Linguistic Verification</span>
-              <span class="tech-tag"><strong>SQLite 3</strong> Persistent Telemetry</span>
-              <span class="tech-tag"><strong>HTML5 & CSS3</strong> Responsive Dashboard</span>
-              <span class="tech-tag"><strong>Vanilla JavaScript</strong> Client State</span>
+              <span class="tech-tag"><strong>WordNet</strong> Morphological Lemmatizer</span>
+              <span class="tech-tag"><strong>LanguageTool</strong> Linguistic Rule Verification</span>
+              <span class="tech-tag"><strong>SQLite 3</strong> Persistent History &amp; Telemetry</span>
+              <span class="tech-tag"><strong>HTML5 &amp; CSS3</strong> Responsive Dual-Theme UI</span>
+              <span class="tech-tag"><strong>Vanilla ES6+ JS</strong> Client State &amp; Reactive UI</span>
             </div>
           </div>
         </div>
@@ -781,46 +803,48 @@
         <!-- System Workflow -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">4. System Workflow</h3>
+            <h3 class="card-title">4. Dual-Engine System Architecture Workflow</h3>
           </div>
           <div class="card-body">
             <div class="workflow-box">
               <code>
-User Enters Text
-  ↓
-Text Preprocessing (Cleaning & Boundary Checks)
-  ↓
-Sentence Tokenization (NLTK sent_tokenize)
-  ↓
-Word Tokenization & POS Tagging (NLTK pos_tag)
-  ↓
-Morphological Lemmatization (WordNet Lemmatizer)
-  ↓
-Grammar & Syntax Rules (SVA, Question Inversion, Articles)
-  ↓
-Statistical Language Engine (LanguageTool)
-  ↓
-Deduplication & Conflict Resolution
-  ↓
-Correction Generation & Interactive Highlighting
-  ↓
-SQLite Storage (History & Statistical Metrics)
+                                 User Input Text
+                                        │
+                         Text Preprocessing &amp; Normalization
+                                        │
+                    ┌───────────────────┴───────────────────┐
+                    ▼                                       ▼
+       [Path A: Rule-Based Engine]             [Path B: Generative AI Engine]
+       • NLTK Punkt Tokenizer                  • Hugging Face Transformers
+       • Perceptron POS Tagger                 • T5 Seq2Seq Model (PyTorch)
+       • WordNet Lemmatization                 • Lazy Initialization
+       • Syntactic Rules (SVA, Inversion)      • Beam Search Generation
+       • Statistical LanguageTool Checking     • Non-Destructive Parsing
+                    │                                       │
+                    ▼                                       ▼
+       Interactive Color Highlights            Contextual Model Correction
+       &amp; POS Syntactic Analysis Table          (Preserves Alternative Meaning)
+                    │                                       │
+                    └───────────────────┬───────────────────┘
+                                        ▼
+                         Dashboard Presentation &amp; Telemetry
+                         (Persistent SQLite History Log)
               </code>
             </div>
           </div>
         </div>
 
-        <!-- Applications -->
+        <!-- Practical Applications -->
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">5. Practical Applications</h3>
           </div>
           <div class="card-body">
             <ul class="about-feature-list">
-              <li><strong>Automated Essay Scoring & Feedback:</strong> Assisting educators and academic institutions in evaluating student writing.</li>
-              <li><strong>English as a Second Language (ESL):</strong> Providing non-native speakers with targeted grammatical explanations.</li>
-              <li><strong>Publishing & Editorial Workflows:</strong> Real-time copyediting for articles, documentation, and technical writing.</li>
-              <li><strong>Chatbots & Dialogue Systems:</strong> Cleansing conversational user queries prior to intent classification.</li>
+              <li><strong>Academic &amp; Research Writing:</strong> Assisting students, scholars, and researchers in detecting structural grammatical flaws and validating vocabulary usage.</li>
+              <li><strong>ESL / EFL Learning Assistance:</strong> Providing non-native English learners with transparent linguistic rationales (POS tags, lemmas, and rule explanations) alongside corrections.</li>
+              <li><strong>Automated Editorial &amp; Publishing Pipelines:</strong> High-throughput copyediting for articles, documentation, and technical manuscripts.</li>
+              <li><strong>Conversational Query Cleansing:</strong> Pre-cleaning user inputs for chatbots, question-answering systems, and search engines before intent classification.</li>
             </ul>
           </div>
         </div>
@@ -828,11 +852,12 @@ SQLite Storage (History & Statistical Metrics)
         <!-- Limitations & Future Scope -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">6. Limitations & Future Scope</h3>
+            <h3 class="card-title">6. Comparative Evaluation, Ethics &amp; Future Scope</h3>
           </div>
           <div class="card-body">
-            <p><strong>Current Limitations:</strong> Rule-based and n-gram methods may lack deep semantic understanding of metaphorical or stylistic nuances. Complex compound subordinate clauses may occasionally require broader discourse context.</p>
-            <p><strong>Future Scope:</strong> Integration of fine-tuned sequence-to-sequence Transformer models (such as Google T5, BART, or RoBERTa for Grammatical Error Correction), support for multilingual error detection, and real-time keystroke autocompletion.</p>
+            <p><strong>Rule Engine vs. Generative AI Trade-Off:</strong> Rule-based checking offers 100% deterministic transparency and zero hallucination risk, but cannot rewrite awkward idioms. The T5 Transformer handles complex rewrites effortlessly, but requires compute overhead and user oversight to prevent subtle semantic shifts.</p>
+            <p><strong>Data Privacy &amp; Ethical AI:</strong> All rule processing runs entirely on-premise without transmitting unencrypted data to external proprietary LLMs. Generative outputs are explicitly labeled to distinguish automated text from user authorship.</p>
+            <p><strong>Future Enhancements:</strong> Fine-tuning specialized domain checkpoints on standard benchmark corpora (JFLEG, CoNLL-2014, BEA-2019), WebAssembly-based client-side Transformer execution via ONNX Runtime, and multi-language grammar support.</p>
           </div>
         </div>
       </div>
